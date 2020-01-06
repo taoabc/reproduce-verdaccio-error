@@ -1,0 +1,30 @@
+storage: /verdaccio/storage/data
+plugins: /verdaccio/plugins
+web:
+  title: TAL NPM
+auth:
+  htpasswd:
+    file: /verdaccio/storage/htpasswd
+    max_users: 3 # peiyou peiyou-ci admin
+uplinks:
+  taobao:
+    url: https://registry.npm.taobao.org/
+packages:
+  '@peiyou/*':
+    access: $all
+    publish: peiyou-ci peiyou admin
+    unpublish: admin peiyou
+    storage: peiyou
+    proxy: taobao
+  '**':
+    access: $all
+    publish: admin
+    unpublish: admin
+    storage: public
+    proxy: taobao
+middlewares:
+  audit:
+    enabled: true
+logs:
+  - { type: stdout, format: pretty, level: http }
+  - { type: rotating-file, format: json, path: /verdaccio/storage/logs/log.jsonl, level: http, options: {period: 1d} }
